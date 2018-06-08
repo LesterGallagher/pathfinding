@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c" width="500" height="500"></canvas>
+    <script src="./pathfinding.min.js"></script>
+    <script>
+        var dim = 51;
+        var lookup = document.getElementsByClassName('col-block');
+        var pathfinding = new GridPath(dim, dim);
+        var canvas = document.getElementById('c');
+        var ctx = canvas.getContext('2d');
+
+        window.addEventListener('mousemove', function (e) {
+            var pos = getMousePos(canvas, e);
+            var x = pos.x;
+            var y = pos.y;
+            if (x < 0 || y < 0 || x >= dim || y >= dim) return;
+            var i = y * dim + x;
+            var mi = Math.round(dim * dim * .5);
+            var nodes = pathfinding.find(mi, i) || [];
+            var bw = canvas.width / dim;
+            var bh = canvas.height / dim;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var k = 0; k < nodes.length; k++) {
+                ctx.fillRect(nodes[k] % dim * bw, Math.floor(nodes[k] / dim) * bh, bw, bh);
+            }
+        });
+
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: Math.round((evt.clientX - rect.left - canvas.width / dim * .5) / canvas.width * dim),
+                y: Math.round((evt.clientY - rect.top - canvas.height / dim * .5) / canvas.height * dim),
+            };
+        }
+    </script>
+</body>
+
+</html>
